@@ -19,7 +19,7 @@ import collections
 import os
 import time
 import uuid
-
+import logging
 import redis as redis_module
 
 
@@ -196,6 +196,7 @@ class RedisCache(GlobalCache):
                 environment.
         """
         url = os.environ.get("REDIS_CACHE_URL")
+        logging.info(url)
         if url:
             return cls(redis_module.Redis.from_url(url))
 
@@ -205,11 +206,14 @@ class RedisCache(GlobalCache):
 
     def get(self, keys):
         """Implements :meth:`GlobalCache.get`."""
+        
         res = self.redis.mget(keys)
+        logging.info(res)
         return res
 
     def set(self, items, expires=None):
         """Implements :meth:`GlobalCache.set`."""
+        logging.info(items)
         self.redis.mset(items)
         if expires:
             for key in items.keys():
